@@ -41,34 +41,45 @@ with col1:
         """)
 
     # User prompt input
-    if prompt := st.text_area("🎯Enter your Verilog code/testbench description here:", key="user_input"):
-        st.session_state.prompt_history.append(prompt)
+    prompt = st.text_area(
+        "🎯Enter your Verilog code/testbench description here:", 
+        key="user_input", 
+        on_change=lambda: st.session_state.update({"submit_trigger": True})
+    )
 
-        # Add the user's input to the session state
-        st.session_state.messages.append({"role": "user", "content": prompt})
+    # Add a message send button
+    if st.button("📨 Send") or st.session_state.get("submit_trigger"):
+        if prompt:
+            st.session_state.prompt_history.append(prompt)
 
-        # Add a system message to guide the AI model
-        st.session_state.messages.append({
-            "role": "system",
-            "content": "You are an assistant that only generates Verilog code or Verilog testbenches. Please do not generate any other type of content. Focus only on writing valid Verilog code or creating Verilog testbenches based on the user's requests."
-        })
+            # Add the user's input to the session state
+            st.session_state.messages.append({"role": "user", "content": prompt})
 
-        # Display the user's input
-        st.write("**Your Request:**")
-        st.markdown(f"> {prompt}")
+            # Add a system message to guide the AI model
+            st.session_state.messages.append({
+                "role": "system",
+                "content": "You are an assistant that only generates Verilog code or Verilog testbenches. Please do not generate any other type of content. Focus only on writing valid Verilog code or creating Verilog testbenches based on the user's requests."
+            })
 
-        # Placeholder for the model's response
-        response_placeholder = st.empty()
+            # Display the user's input
+            st.write("**Your Request:**")
+            st.markdown(f"> {prompt}")
 
-        # Generate the model's response
-        response = ""
-        with st.spinner("✨Generating Verilog code..."):
-            for chunk in ollama_generator(st.session_state.messages):
-                response += chunk
-                response_placeholder.markdown(f"```\n{response}\n```")
+            # Placeholder for the model's response
+            response_placeholder = st.empty()
 
-        # Append the response to the session history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+            # Generate the model's response
+            response = ""
+            with st.spinner("✨Generating Verilog code..."):
+                for chunk in ollama_generator(st.session_state.messages):
+                    response += chunk
+                    response_placeholder.markdown(f"```\n{response}\n```")
+
+            # Append the response to the session history
+            st.session_state.messages.append({"role": "assistant", "content": response})
+
+            # Reset the submit trigger
+            st.session_state["submit_trigger"] = False
 
 with col2:
     st.subheader("📜Generated Output")
