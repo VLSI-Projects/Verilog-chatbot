@@ -8,7 +8,6 @@ st.set_page_config(page_title='Verilog Testbench Generator', page_icon='🛠️'
 # Function to generate responses using the qwen2.5 model
 def ollama_generator(messages: Dict) -> Generator:
     stream = ollama.chat(model="qwen2.5", messages=messages, stream=True)
-    ollama.chat(url="https://verilogtestbench.streamlit.app", model="qwen2.5", messages=messages, stream=True)
     for chunk in stream:
         yield chunk['message']['content']
 
