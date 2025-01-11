@@ -11,3 +11,5 @@ Real-time Results: Get instant Verilog testbench code based on the description p
 * streamlit==1.31.0
 * ollama==0.1.6 (python package)
 * [ollama server](https://github.com/ollama/ollama)
+* ![image](https://github.com/user-attachments/assets/021fd751-79b6-4578-9ba0-4e2d6e11613c)
+
